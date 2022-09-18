@@ -1,2 +1,2 @@
-# Port-Latency-Loadbalancing-Prober
+# Port-Latency-Load-Balancing-Prober
 PLLP
