@@ -16,7 +16,7 @@ keys = Tools.cmd(target,'key=$(wg genkey) && echo $key && echo $key | wg pubkey'
 clientPrivate, clientPublic = keys.splitlines()
 
 latency = {}
-for port in range(1000,55000,1000):
+for port in range(1000,65000,1000):
     print(f"Testing on Port {port}")
     #Stopping wireguard
     Tools.cmd(start,f'systemctl stop wg-quick@PLLP')
@@ -30,9 +30,8 @@ for port in range(1000,55000,1000):
     #Deploying Client config
     Tools.cmd(target,f'echo "{clientConfig}" > /etc/wireguard/PLLP.conf && systemctl start wg-quick@PLLP')
     #Running fping
-    fping = Tools.cmd(target,f'fping -c10 172.16.1.0')[0]
+    fping = Tools.cmd(target,f'fping -c5 172.16.1.0')[0]
     parsed = re.findall("([0-9.]+).*?([0-9]+.[0-9]).*?([0-9])% loss",fping, re.MULTILINE)
-    latency =  {}
     for ip,ms,loss in parsed:
         if port not in latency: latency[port] = []
         latency[port].append(ms)
@@ -40,6 +39,7 @@ for port in range(1000,55000,1000):
     del latency[port][0]
     latency[port].sort()
     avg = Tools.getAvrg(latency[port])
+    latency[port] = avg
     print(f"Got {avg}ms")
     #Stopping wireguard
     Tools.cmd(start,f'systemctl stop wg-quick@PLLP')
@@ -47,3 +47,7 @@ for port in range(1000,55000,1000):
 #Removing wireguard files
 Tools.cmd(start,f'rm /etc/wireguard/PLLP.conf')
 Tools.cmd(target,f'rm /etc/wireguard/PLLP.conf')
+#Stats
+latency = sorted(latency.items(), key=lambda x: x[1])
+for row in latency:
+    print(f"{row[1]}ms {row[0]}")
