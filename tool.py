@@ -50,4 +50,4 @@ Tools.cmd(target,f'rm /etc/wireguard/PLLP.conf')
 #Stats
 latency = sorted(latency.items(), key=lambda x: x[1])
 for row in latency:
-    print(f"{row[1]}ms {row[0]}")
+    print(f"{row[1]:.2f}ms {row[0]}")
