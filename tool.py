@@ -1,11 +1,11 @@
 from Class.tools import Tools
-import subprocess, sys, re
+import subprocess, socket, sys, re
 
 start = sys.argv[1]
 target = sys.argv[2]
 
-start = subprocess.check_output(['dig','ANY','+short',start]).decode("utf-8").strip()
-target = subprocess.check_output(['dig','ANY','+short',target]).decode("utf-8").strip()
+start = socket.gethostbyname(start)
+target = socket.gethostbyname(target)
 
 print(f"Testing from {start} to {target}")
 print(f"Generating keys")
